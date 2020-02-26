@@ -15,8 +15,11 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,17 +35,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -82,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     static Tm128 tm128;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //StrictMode.enableDefaults();
+        StrictMode.enableDefaults();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -128,8 +124,8 @@ public class MainActivity extends AppCompatActivity {
         }else {
             checkRunTimePermission();
         }
-        //getTM();
-        //getData();
+        getAddr();
+        getData();
 
         imgvCached.setOnClickListener(new View.OnClickListener()
         {
@@ -140,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
                 }else {
                     checkRunTimePermission();
                 }
-                //getTM();
-                //getData();
+                getAddr();
+                getData();
             }
         });
 
@@ -161,57 +157,14 @@ public class MainActivity extends AppCompatActivity {
         });*/
     }
 
-  /*  public void getTM(){
-        OkHttpClient httpClient = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        Request newRequest  = chain.request().newBuilder()
-                                .addHeader("Authorization", "KakaoAK "+"4d40cecd24ecd23e764ca6288d79d61c")
-                                .addHeader("Content-Type", "application/json;charset=UTF-8")
-                                .build();
-                        return chain.proceed(newRequest);
-                    }
-                }).build();
-
-
-
-
-        Retrofit client = new Retrofit.Builder().baseUrl("https://dapi.kakao.com/").addConverterFactory(
-                GsonConverterFactory.create()).client(httpClient).
-                addConverterFactory(ScalarsConverterFactory.create()).build();
-        RetrofitService retrofitService = client.create(RetrofitService.class);
-
-        final Call<Location> call = retrofitService.getTM(latitude, longitude, "WGS84", "TM");
-
-        call.enqueue(new Callback<Location>() {
-            @Override
-            public void onResponse(@NonNull Call<Location> call,@NonNull Response<Location> response) {
-
-                if (response.isSuccessful()) {
-                    tvLocation.setText("gg");
-                    Log.d("aaa", response.body().documents.get(0).x+"aa");
-                }
-
-            }
-            @Override
-            public void onFailure(@NonNull Call<Location> call,@NonNull Throwable t) {
-                Log.d("ddddfg",t.toString());
-                tvLocation.setText(t.toString());
-
-            }
-        });
-    }*/
 
     public void getAddr(){
         gpsTracker = new GpsTracker(MainActivity.this);
         double addratitude = gpsTracker.getLatitude();
         double addrlongitude = gpsTracker.getLongitude();
         if (addratitude==0.0 && addrlongitude==0.0){
-            tm128 = Tm128.valueOf(latLng);
+
         }else{
-            latLng = new LatLng(addratitude, addrlongitude);
-            tm128 = Tm128.valueOf(latLng);
             latitude = addratitude;
             longitude = addrlongitude;
         }
@@ -249,13 +202,8 @@ public class MainActivity extends AppCompatActivity {
         try{
             Log.d("aaaf",admin+"aa");
             URL url;
-            if (locality==null){
-                url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getTMStdrCrdnt?serviceKey="+ key+ "&numOfRows=10&pageNo=1&umdName="
-                        +thoroughfare);
-            }else {
-                url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getTMStdrCrdnt?serviceKey="+ key+ "&numOfRows=10&pageNo=1&umdName="
-                        +locality+ " "+thoroughfare);
-            }
+            url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getTMStdrCrdnt?serviceKey="+ key+ "&numOfRows=10&pageNo=1&umdName="
+                    +thoroughfare);
 
 
             InputStream is= url.openStream();
@@ -314,11 +262,81 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        if (tmX.replace(" ", "").equals("")){
+            try{
+                URL url;
+                thoroughfare.replace("[0-9]", "");
+
+                url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getTMStdrCrdnt?serviceKey="+ key+ "&numOfRows=10&pageNo=1&umdName="
+                        +thoroughfare);
+
+
+                InputStream is= url.openStream();
+                Log.d("aaaf",thoroughfare+"12aa");
+
+
+                //XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
+                //XmlPullParser parser = parserCreator.newPullParser();
+
+                XmlPullParserFactory factory= XmlPullParserFactory.newInstance();
+                XmlPullParser xpp= factory.newPullParser();
+
+                xpp.setInput(new InputStreamReader(is, "UTF-8"));
+
+                //parser.setInput(new InputStreamReader(url.openStream(), "UTF-8"));
+
+                int parserEvent = xpp.getEventType();
+                String addradmin = "";
+
+                while (parserEvent != XmlPullParser.END_DOCUMENT){
+                    switch(parserEvent){
+                        case XmlPullParser.START_TAG:
+                            if(xpp.getName().equals("sidoName")){
+                                xpp.next();
+                                addradmin = xpp.getText();
+                                tvLocation.setText(addradmin);
+                            }
+                            else if(xpp.getName().equals("tmX")){
+                                inTmX = true;
+                            }
+                            else if (xpp.getName().equals("tmY")){
+                                inTmY = true;
+                            }
+
+                            break;
+                        case XmlPullParser.TEXT:
+
+                            if (inTmX){
+                                if (addradmin.equals(admin)){
+                                    tmX = xpp.getText();
+                                }
+                                inTmX = false;
+
+                            }
+                            else if (inTmY){
+                                if (addradmin.equals(admin)){
+                                    tmY = xpp.getText();
+                                }
+                                inTmY= false;
+                            }
+                            break;
+                        case XmlPullParser.END_TAG:
+                            break;
+                    }
+                    parserEvent = xpp.next();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
         try{
 
             Log.d("asdf", tmX+"  "+ tmY);
             URL url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getNearbyMsrstnList?serviceKey="+ key+
-                    "&tmX="+latitude+"&tmY="+longitude);
+                    "&tmX="+tmX+"&tmY="+tmY);
 
             InputStream is= url.openStream();
             //XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
@@ -498,12 +516,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setData(){
+        long now = System.currentTimeMillis();
+        Date mDate = new Date(now);
+        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd hh:mm a", new Locale("en", "US"));
+        String nowTime = simpleDate.format(mDate);
+
         if (subLocality==null){
             tvLocation.setText(thoroughfare);
         }else{
-            tvLocation.setText(locationArray[locationArray.length-3] + " " + thoroughfare);
+            tvLocation.setText(locationArray[locationArray.length-3] + " " + locationArray[locationArray.length-2]);
         }
-        tvDateTime.setText(dateTime);
+        tvDateTime.setText(nowTime);
         if(Integer.parseInt(pm10Grade)>Integer.parseInt(pm25Grade)){
             tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
         }else{
@@ -528,7 +551,7 @@ public class MainActivity extends AppCompatActivity {
         tvSo2concentration.setText(so2value+" ppm");
 
         tvDetailDateTime.setText("업데이트 시간 : "+dateTime);
-        tvDetailStation.setText("측정소 이름:"+stationName);
+        tvDetailStation.setText("측정소 이름 : "+stationName);
         tvDetailKhaiValue.setText("통합지수 값 : "+khaiValue+" unit");
         tvDetailKhaiGrade.setText("통합지수 상태 : " + getStatus(Integer.parseInt(khaiGrade)));
         setImage();
@@ -536,8 +559,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setImage(){
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         if(Integer.parseInt(pm10Grade)>=Integer.parseInt(pm25Grade)){
             tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
+
+
             if (pm10Grade.equals("1")){
                 Log.d("aasdf","hah");
 
@@ -545,6 +573,7 @@ public class MainActivity extends AppCompatActivity {
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorBlue));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_blue));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_blue));
+                window.setStatusBarColor(getColor(R.color.colorBlue));
 
             }else if (pm10Grade.equals("2")){
 
@@ -552,6 +581,7 @@ public class MainActivity extends AppCompatActivity {
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorGreen));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_green));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_green));
+                window.setStatusBarColor(getColor(R.color.colorGreen));
 
             }else if(pm10Grade.equals("3")){
 
@@ -559,12 +589,14 @@ public class MainActivity extends AppCompatActivity {
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorOrange));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_orange));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_orange));
+                window.setStatusBarColor(getColor(R.color.colorOrange));
 
             }else if (pm10Grade.equals("4")){
                 imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_very_dissatisfied_white_36));
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorRed));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_red));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_red));
+                window.setStatusBarColor(getColor(R.color.colorRed));
             }
         }else{
             tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
@@ -575,6 +607,7 @@ public class MainActivity extends AppCompatActivity {
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorBlue));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_blue));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_blue));
+                window.setStatusBarColor(getColor(R.color.colorBlue));
 
             }else if (pm25Grade.equals("2")){
 
@@ -582,6 +615,7 @@ public class MainActivity extends AppCompatActivity {
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorGreen));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_green));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_green));
+                window.setStatusBarColor(getColor(R.color.colorGreen));
 
             }else if(pm25Grade.equals("3")){
 
@@ -589,12 +623,14 @@ public class MainActivity extends AppCompatActivity {
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorOrange));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_orange));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_orange));
+                window.setStatusBarColor(getColor(R.color.colorOrange));
 
             }else if (pm25Grade.equals("4")){
                 imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_very_dissatisfied_white_36));
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorRed));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_red));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_red));
+                window.setStatusBarColor(getColor(R.color.colorRed));
             }
         }
         changeImage(imgvCo,coGrade);
