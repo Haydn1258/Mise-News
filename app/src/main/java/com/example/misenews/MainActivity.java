@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         }else {
             checkRunTimePermission();
         }
-        getJson();
+        //getTM();
         //getData();
 
         imgvCached.setOnClickListener(new View.OnClickListener()
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 }else {
                     checkRunTimePermission();
                 }
-                getJson();
+                //getTM();
                 //getData();
             }
         });
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         });*/
     }
 
-    public void getJson(){
+  /*  public void getTM(){
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (response.isSuccessful()) {
                     tvLocation.setText("gg");
-                    Log.d("aaa", response.body().document+"aa");
+                    Log.d("aaa", response.body().documents.get(0).x+"aa");
                 }
 
             }
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
+    }*/
 
     public void getAddr(){
         gpsTracker = new GpsTracker(MainActivity.this);

@@ -8,8 +8,8 @@ import java.util.List;
 public class Location {
     @SerializedName("meta")
     Meta meta;
-    @SerializedName("document")
-    List<Document> document;
+    @SerializedName("documents")
+    ArrayList<Document> documents;
 
     public class Meta{
         @SerializedName("total_count")
@@ -19,7 +19,7 @@ public class Location {
     }
 
     public class Document{
-        @SerializedName("x")String x;
+        @SerializedName("x")String x="1";
         @SerializedName("y")String y;
 
         public String getX() {return x;}
