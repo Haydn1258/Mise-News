@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -63,17 +65,24 @@ public class MainActivity extends AppCompatActivity {
     String subLocality;
     String thoroughfare;
 
-    TextView tvLocation, tvDateTime, tvStatus, tvGuide, tvPm10Status, tvPm10concentration, tvPm25status, tvPm25concentration
+    TextView tvLocation, tvDateTime, tvStatus, tvPm10Status, tvPm10concentration, tvPm25status, tvPm25concentration
             , tvNo2status, tvNo2concentration, tvO3status, tvO3concentration, tvCostatus, tvCoconcentration
             , tvSo2status, tvSo2concentration, tvDetailDateTime, tvDetailStation, tvDetailKhaiValue, tvDetailKhaiGrade;
 
-    ImageView imgvStatus, imgvPm10, imgvPm25, imgvNo2, imgvO3, imgvCo, imgvSo2, imgvCached;
+    ImageView imgvStatus, imgvPm10, imgvPm25, imgvNo2, imgvO3, imgvCo, imgvSo2, imgvCached, imgvNav, drawer_imgvExit;
 
-    ConstraintLayout constraintLayoutMain,constraintLayoutDetail;
+    Button drawer_btnExit;
+
+    ConstraintLayout drawer;
 
     LinearLayout linearLayoutScrView;
 
+    DrawerLayout drawer_layout;
+
     LatLng latLng = new LatLng(latitude, longitude);
+
+    Window window;
+
 
     static Tm128 tm128;
     @Override
@@ -85,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
         tvLocation = (TextView)findViewById(R.id.txtvLocation);
         tvDateTime = (TextView)findViewById(R.id.txtvDateTime);
         tvStatus = (TextView)findViewById(R.id.txtvStatus);
-        tvGuide =  (TextView)findViewById(R.id.txtvGuide);
         tvPm10Status =  (TextView)findViewById(R.id.txtvPm10status);
         tvPm10concentration = (TextView)findViewById(R.id.txtvPm10concentration);
         tvPm25status = (TextView)findViewById(R.id.txtvPm25status);
@@ -111,11 +119,17 @@ public class MainActivity extends AppCompatActivity {
         imgvCo = (ImageView) findViewById(R.id.imgvCo);
         imgvSo2 = (ImageView) findViewById(R.id.imgvSo2);
         imgvCached = (ImageView) findViewById(R.id.imgvCached);
+        imgvNav = (ImageView) findViewById(R.id.imgvNav);
+        drawer_imgvExit = (ImageView) findViewById(R.id.drawer_imgvExit);
 
-        constraintLayoutMain =(ConstraintLayout)findViewById(R.id.constraintLayoutMain);
-        constraintLayoutDetail = (ConstraintLayout)findViewById(R.id.constraintLayoutDetail);
+        drawer_btnExit = (Button) findViewById(R.id.drawer_btnExit);
 
-        linearLayoutScrView = (LinearLayout)findViewById(R.id.linearLayoutScrView);
+        drawer_layout =(DrawerLayout) findViewById(R.id.drawer_layout);
+
+        drawer = (ConstraintLayout) findViewById(R.id.drawer);
+        window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         if (!checkLocationServicesStatus()) {
             showDialogForLocationServiceSetting();
@@ -130,14 +144,41 @@ public class MainActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View view) {
+                imgvCached.setClickable(false);
                 if (!checkLocationServicesStatus()) {
                     showDialogForLocationServiceSetting();
                 }else {
                     checkRunTimePermission();
                 }
                 getAddr();
-                getData();
-                setData();
+                try{
+                    getData();
+                    setData();
+                }catch (Exception e){
+                    Log.d("Exception", e.toString());
+                }
+                imgvCached.setClickable(true);
+            }
+        });
+
+        imgvNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer_layout.openDrawer(drawer);
+            }
+        });
+
+        drawer_imgvExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer_layout.closeDrawer(drawer);
+            }
+        });
+
+        drawer_btnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer_layout.closeDrawer(drawer);
             }
         });
 
@@ -549,74 +590,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setImage(){
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         if(Integer.parseInt(pm10Grade)>=Integer.parseInt(pm25Grade)){
             tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
+            setColor(pm10Grade);
 
-
-            if (pm10Grade.equals("1")){
-                Log.d("aasdf","hah");
-                imgvStatus.setImageResource(R.drawable.outline_sentiment_very_satisfied_white_36);
-                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorBlue));
-                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_blue));
-                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_blue));
-                window.setStatusBarColor(getColor(R.color.colorBlue));
-
-            }else if (pm10Grade.equals("2")){
-                imgvStatus.setImageResource(R.drawable.outline_sentiment_satisfied_white_36);
-                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorGreen));
-                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_green));
-                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_green));
-                window.setStatusBarColor(getColor(R.color.colorGreen));
-
-            }else if(pm10Grade.equals("3")){
-                imgvStatus.setImageResource(R.drawable.outline_sentiment_dissatisfied_white_36);
-                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorOrange));
-                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_orange));
-                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_orange));
-                window.setStatusBarColor(getColor(R.color.colorOrange));
-
-            }else if (pm10Grade.equals("4")){
-                imgvStatus.setImageResource(R.drawable.outline_sentiment_very_dissatisfied_white_36);
-                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorRed));
-                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_red));
-                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_red));
-                window.setStatusBarColor(getColor(R.color.colorRed));
-            }
         }else{
             tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
-            if (pm25Grade.equals("1")){
-                Log.d("aasdf","hah");
-                imgvStatus.setImageResource(R.drawable.outline_sentiment_very_satisfied_white_36);
-                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorBlue));
-                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_blue));
-                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_blue));
-                window.setStatusBarColor(getColor(R.color.colorBlue));
-
-            }else if (pm25Grade.equals("2")){
-                imgvStatus.setImageResource(R.drawable.outline_sentiment_satisfied_white_36);
-                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorGreen));
-                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_green));
-                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_green));
-                window.setStatusBarColor(getColor(R.color.colorGreen));
-
-            }else if(pm25Grade.equals("3")){
-
-                imgvStatus.setImageResource(R.drawable.outline_sentiment_dissatisfied_white_36);
-                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorOrange));
-                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_orange));
-                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_orange));
-                window.setStatusBarColor(getColor(R.color.colorOrange));
-
-            }else if (pm25Grade.equals("4")){
-                imgvStatus.setImageResource(R.drawable.outline_sentiment_very_dissatisfied_white_36);
-                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorRed));
-                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_red));
-                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_red));
-                window.setStatusBarColor(getColor(R.color.colorRed));
-            }
+            setColor(pm25Grade);
         }
         changeImage(imgvCo,coGrade);
         changeImage(imgvNo2,no2Grade);
@@ -624,6 +604,32 @@ public class MainActivity extends AppCompatActivity {
         changeImage(imgvPm10, pm10Grade);
         changeImage(imgvPm25, pm25Grade);
         changeImage(imgvSo2, so2Grade);
+
+    }
+
+    public void setColor(String status){
+        switch (status){
+            case "1":
+                window.setStatusBarColor(getColor(R.color.colorLightBlue));
+                drawer_layout.setBackgroundResource(R.drawable.main_background_blue);
+                drawer.setBackgroundColor(getColor(R.color.colorLightBlue));
+                break;
+            case "2":
+                window.setStatusBarColor(getColor(R.color.colorLightGreen));
+                drawer_layout.setBackgroundResource(R.drawable.main_background_green);
+                drawer.setBackgroundColor(getColor(R.color.colorLightGreen));
+                break;
+            case "3":
+                window.setStatusBarColor(getColor(R.color.colorAmber));
+                drawer_layout.setBackgroundResource(R.drawable.main_backgound_orange);
+                drawer.setBackgroundColor(getColor(R.color.colorAmber));
+                break;
+            case "4":
+                window.setStatusBarColor(getColor(R.color.colorDeepOrange));
+                drawer_layout.setBackgroundResource(R.drawable.main_background_red);
+                drawer.setBackgroundColor(getColor(R.color.colorDeepOrange));
+                break;
+        }
 
     }
 

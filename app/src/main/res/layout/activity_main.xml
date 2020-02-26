@@ -1,477 +1,370 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:id="@+id/constraintLayoutMain"
-    android:background="@color/colorBlue">
+    android:id="@+id/drawer_layout"
+    android:background="@drawable/main_backgound_orange">
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:scrollbars="none"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp">
+        android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+
+        <ImageView
+            android:id="@+id/imgvCached"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/outline_cached_white_36dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"/>
+
+
+        <ImageView
+            android:id="@+id/imgvNav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/outline_dehaze_white_36dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"/>
+
+        <TextView
+            android:gravity="center"
+            android:id="@+id/txtvLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Location"
+            android:textColor="@android:color/white"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgvCached"/>
+
+        <TextView
+            android:id="@+id/txtvDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DateTime"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtvLocation" />
+
+        <ImageView
+            android:id="@+id/imgvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/txtvDateTime"
+            app:layout_constraintBottom_toTopOf="@+id/horisontalScrollView"
+            app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
+
+        <TextView
+            android:id="@+id/txtvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status"
+            android:textColor="@android:color/white"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgvStatus" />
+
+
+        <HorizontalScrollView
+            android:id="@+id/horisontalScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-
-            <ImageView
-                android:id="@+id/imgvCached"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/outline_cached_white_36dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"/>
-
-            <TextView
-                android:gravity="center"
-                android:id="@+id/txtvLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:text="Location"
-                android:textColor="@android:color/white"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/txtvDateTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DateTime"
-                android:textColor="@android:color/white"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtvLocation" />
-
-            <ImageView
-                android:id="@+id/imgvStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtvDateTime"
-                app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
-
-            <TextView
-                android:id="@+id/txtvStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Status"
-                android:textColor="@android:color/white"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imgvStatus" />
-
-            <TextView
-                android:id="@+id/txtvGuide"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="행복하세요"
-                android:textColor="@android:color/white"
-                android:textSize="26sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtvStatus" />
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:fadingEdgeLength="0px"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <LinearLayout
-                android:id="@+id/linearLayoutScrView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/rounded_blue"
-                android:orientation="vertical"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtvGuide">
-
-                <HorizontalScrollView
-                    android:id="@+id/horisontalScrollView"
-                    android:layout_width="match_parent"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:fadingEdgeLength="0px"
-                    android:overScrollMode="never"
-                    android:scrollbars="none"
-                    app:layout_constraintTop_toBottomOf="@id/txtvGuide">
+                    android:orientation="vertical">
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/txtvPm10"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_gravity="center"
+                        android:text="@string/pm10"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp" />
 
-                        <LinearLayout
-                            android:layout_width="120dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                    <ImageView
+                        android:id="@+id/imgvPm10"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
 
-                            <TextView
-                                android:id="@+id/txtvPm10"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="@string/pm10"
-                                android:textColor="@android:color/white"
-                                android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/txtvPm10status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <ImageView
-                                android:id="@+id/imgvPm10"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
+                    <TextView
+                        android:id="@+id/txtvPm10concentration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <TextView
-                                android:id="@+id/txtvPm10status"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/txtvPm10concentration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                <LinearLayout
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                        </LinearLayout>
+                    <TextView
+                        android:id="@+id/txtvPm25"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/pm25"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp" />
 
-                        <LinearLayout
-                            android:layout_width="120dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                    <ImageView
+                        android:id="@+id/imgvPm25"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
 
-                            <TextView
-                                android:id="@+id/txtvPm25"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="@string/pm25"
-                                android:textColor="@android:color/white"
-                                android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/txtvPm25status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <ImageView
-                                android:id="@+id/imgvPm25"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
+                    <TextView
+                        android:id="@+id/txtvPm25concentration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <TextView
-                                android:id="@+id/txtvPm25status"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/txtvPm25concentration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                <LinearLayout
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                        </LinearLayout>
+                    <TextView
+                        android:id="@+id/txtvNo2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/no2"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp" />
 
-                        <LinearLayout
-                            android:layout_width="120dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                    <ImageView
+                        android:id="@+id/imgvNo2"
+                        android:layout_width="50dp"
+                        android:layout_height="51dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
 
-                            <TextView
-                                android:id="@+id/txtvNo2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="@string/no2"
-                                android:textColor="@android:color/white"
-                                android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/txtvNo2status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <ImageView
-                                android:id="@+id/imgvNo2"
-                                android:layout_width="50dp"
-                                android:layout_height="51dp"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
+                    <TextView
+                        android:id="@+id/txtvNo2concentration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <TextView
-                                android:id="@+id/txtvNo2status"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/txtvNo2concentration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                <LinearLayout
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                        </LinearLayout>
+                    <TextView
+                        android:id="@+id/txtvO3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/o3"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp" />
 
-                        <LinearLayout
-                            android:layout_width="120dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                    <ImageView
+                        android:id="@+id/imgvO3"
+                        android:layout_width="50dp"
+                        android:layout_height="51dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
 
-                            <TextView
-                                android:id="@+id/txtvO3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="@string/o3"
-                                android:textColor="@android:color/white"
-                                android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/txtvO3status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <ImageView
-                                android:id="@+id/imgvO3"
-                                android:layout_width="50dp"
-                                android:layout_height="51dp"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
+                    <TextView
+                        android:id="@+id/txtvO3concentration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <TextView
-                                android:id="@+id/txtvO3status"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/txtvO3concentration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                <LinearLayout
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                        </LinearLayout>
+                    <TextView
+                        android:id="@+id/txtvCo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/co"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp" />
 
-                        <LinearLayout
-                            android:layout_width="120dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                    <ImageView
+                        android:id="@+id/imgvCo"
+                        android:layout_width="50dp"
+                        android:layout_height="51dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
 
-                            <TextView
-                                android:id="@+id/txtvCo"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="@string/co"
-                                android:textColor="@android:color/white"
-                                android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/txtvCostatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <ImageView
-                                android:id="@+id/imgvCo"
-                                android:layout_width="50dp"
-                                android:layout_height="51dp"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
+                    <TextView
+                        android:id="@+id/txtvCoconcentration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <TextView
-                                android:id="@+id/txtvCostatus"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/txtvCoconcentration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                <LinearLayout
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                        </LinearLayout>
+                    <TextView
+                        android:id="@+id/txtvSo2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/so2"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp" />
 
-                        <LinearLayout
-                            android:layout_width="120dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                    <ImageView
+                        android:id="@+id/imgvSo2"
+                        android:layout_width="50dp"
+                        android:layout_height="51dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
 
-                            <TextView
-                                android:id="@+id/txtvSo2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="@string/so2"
-                                android:textColor="@android:color/white"
-                                android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/txtvSo2status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <ImageView
-                                android:id="@+id/imgvSo2"
-                                android:layout_width="50dp"
-                                android:layout_height="51dp"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                app:srcCompat="@drawable/outline_sentiment_very_satisfied_white_36" />
+                    <TextView
+                        android:id="@+id/txtvSo2concentration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="좋음"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                            <TextView
-                                android:id="@+id/txtvSo2status"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="5dp"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
+                </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/txtvSo2concentration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="좋음"
-                                android:textColor="@android:color/white"
-                                android:textSize="18sp" />
-
-                        </LinearLayout>
-
-
-                    </LinearLayout>
-
-                </HorizontalScrollView>
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/txtvDetails"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:text="세부사항"
-                android:textColor="@android:color/white"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayoutScrView" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayoutDetail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:paddingBottom="20dp"
-                android:background="@drawable/rounded_blue"
-                app:layout_constraintTop_toBottomOf="@+id/txtvDetails">
-
-                <TextView
-                    android:id="@+id/txtvDetailDateTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="datetime"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/txtvDetailStation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="station"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtvDetailDateTime" />
-
-                <TextView
-                    android:id="@+id/txtvDetailKhaiValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="KhaiValue"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtvDetailStation" />
-
-                <TextView
-                    android:id="@+id/txtvDetailKhaiGrade"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="KhaiGrade"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtvDetailKhaiValue" />
+        </HorizontalScrollView>
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <View
-                android:id="@+id/view3"
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayoutDetail"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+    <include layout="@layout/activity_drawer"/>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

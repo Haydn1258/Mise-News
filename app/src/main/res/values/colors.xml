@@ -7,4 +7,8 @@
     <color name="colorGreen">#388E3C</color>
     <color name="colorOrange">#F57C00</color>
     <color name="colorRed">#D32F2F</color>
+    <color name="colorLightBlue">#4FC3F7</color>
+    <color name="colorDeepOrange">#FF7043</color>
+    <color name="colorLightGreen">#9CCC65</color>
+    <color name="colorAmber">#FFCA28</color>
 </resources>
