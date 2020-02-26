@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MiseNews</string>
+    <string name="pm10">미세먼지</string>
+    <string name="pm25">초미세먼지</string>
+    <string name="no2">이산화질소</string>
+    <string name="o3">오존</string>
+    <string name="co">일산화탄소</string>
+    <string name="so2">아황산가스</string>
 </resources>

@@ -3,6 +3,7 @@ package com.example.misenews;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -11,17 +12,25 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.icu.text.DateFormat;
+import android.icu.text.LocaleDisplayNames;
+import android.icu.text.SimpleDateFormat;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +42,10 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 
@@ -43,104 +55,129 @@ public class MainActivity extends AppCompatActivity {
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-    Button bt;
-    TextView tv;
     String key = "mjfRpO4X3kZj357lQFtFSps%2FRAy1g%2FgZXIHYXcS7SFQN0uTpLkoi%2FWqc8fZvb3HrkpVqiGQzXdt7kSkNXRkaVQ%3D%3D";
-    Boolean instationName = false;
-    String stationName = "";
-    double latitude=37.5670135, longitude=126.9783740;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
-    private FusedLocationSource locationSource;
-    LocationManager lm;
 
+    Boolean instationName = false, inTmX = false, inTmY = false, inDateTime=false, inSo2Value=false, inCoValue= false, inO3Value=false
+            , inNo2Value= false, inPm10Value= false, inPm25Value= false, inSo2Grade= false, inCoGrade = false, inO3Grade = false
+            , inNo2Grade = false, inPm10Grade = false, inPm25Grade=false, inKhaiValue= false, inKhaiGrade = false, inAdmin;
+    String stationName = "", tmX = "", tmY = "", dateTime="", so2value="", covalue="", o3value="", no2value=""
+            , pm10value="", pm25value="", so2Grade = "", coGrade = "", o3Grade="", no2Grade="", pm10Grade="", pm25Grade="",
+            khaiValue = "",khaiGrade = "", location = "" ;
+    String[] locationArray;
+
+    double latitude=37.5670135, longitude=126.9783740;
+
+    String locality, admin;
+    String subLocality;
+    String thoroughfare;
+
+    TextView tvLocation, tvDateTime, tvStatus, tvGuide, tvPm10Status, tvPm10concentration, tvPm25status, tvPm25concentration
+            , tvNo2status, tvNo2concentration, tvO3status, tvO3concentration, tvCostatus, tvCoconcentration
+            , tvSo2status, tvSo2concentration, tvDetailDateTime, tvDetailStation, tvDetailKhaiValue, tvDetailKhaiGrade;
+
+    ImageView imgvStatus, imgvPm10, imgvPm25, imgvNo2, imgvO3, imgvCo, imgvSo2, imgvCached;
+
+    ConstraintLayout constraintLayoutMain,constraintLayoutDetail;
+
+    LinearLayout linearLayoutScrView;
+
+    LatLng latLng = new LatLng(latitude, longitude);
+
+    static Tm128 tm128;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.enableDefaults();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        tvLocation = (TextView)findViewById(R.id.txtvLocation);
+        tvDateTime = (TextView)findViewById(R.id.txtvDateTime);
+        tvStatus = (TextView)findViewById(R.id.txtvStatus);
+        tvGuide =  (TextView)findViewById(R.id.txtvGuide);
+        tvPm10Status =  (TextView)findViewById(R.id.txtvPm10status);
+        tvPm10concentration = (TextView)findViewById(R.id.txtvPm10concentration);
+        tvPm25status = (TextView)findViewById(R.id.txtvPm25status);
+        tvPm25concentration = (TextView)findViewById(R.id.txtvPm25concentration);
+        tvNo2status = (TextView)findViewById(R.id.txtvNo2status);
+        tvNo2concentration = (TextView)findViewById(R.id.txtvNo2concentration);
+        tvO3status = (TextView)findViewById(R.id.txtvO3status);
+        tvO3concentration = (TextView)findViewById(R.id.txtvO3concentration);
+        tvCostatus = (TextView)findViewById(R.id.txtvCostatus);
+        tvCoconcentration = (TextView)findViewById(R.id.txtvCoconcentration);
+        tvSo2status = (TextView)findViewById(R.id.txtvSo2status);
+        tvSo2concentration = (TextView)findViewById(R.id.txtvSo2concentration);
+        tvDetailDateTime = (TextView)findViewById(R.id.txtvDetailDateTime);
+        tvDetailStation = (TextView)findViewById(R.id.txtvDetailStation);
+        tvDetailKhaiValue = (TextView)findViewById(R.id.txtvDetailKhaiValue);
+        tvDetailKhaiGrade = (TextView)findViewById(R.id.txtvDetailKhaiGrade);
+
+        imgvStatus = (ImageView) findViewById(R.id.imgvStatus);
+        imgvPm10 = (ImageView) findViewById(R.id.imgvPm10);
+        imgvPm25 = (ImageView) findViewById(R.id.imgvPm25);
+        imgvNo2 = (ImageView) findViewById(R.id.imgvNo2);
+        imgvO3 = (ImageView) findViewById(R.id.imgvO3);
+        imgvCo = (ImageView) findViewById(R.id.imgvCo);
+        imgvSo2 = (ImageView) findViewById(R.id.imgvSo2);
+        imgvCached = (ImageView) findViewById(R.id.imgvCached);
+
+        constraintLayoutMain =(ConstraintLayout)findViewById(R.id.constraintLayoutMain);
+        constraintLayoutDetail = (ConstraintLayout)findViewById(R.id.constraintLayoutDetail);
+
+        linearLayoutScrView = (LinearLayout)findViewById(R.id.linearLayoutScrView);
+
+
 
         if (!checkLocationServicesStatus()) {
             showDialogForLocationServiceSetting();
         }else {
             checkRunTimePermission();
         }
-        bt = (Button)findViewById(R.id.button);
-        tv = (TextView)findViewById(R.id.textView);
-        bt.setOnClickListener(new View.OnClickListener() {
+        getAddr();
+        getData();
+
+        imgvCached.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View view) {
-                StrictMode.enableDefaults();
-               /* gpsTracker = new GpsTracker(MainActivity.this);
-                double latitude = gpsTracker.getLatitude();
-                double longitude = gpsTracker.getLongitude();
-                LatLng latLng = new LatLng(latitude, longitude);
-                Tm128 tm128 = Tm128.valueOf(latLng);
-                Log.d("aaaa", ""+tm128.x +"  "+tm128.y);*/
-                try{
-                    Context ct = getApplicationContext();
-                    GpsTracker gk = new GpsTracker(ct);
-                    lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-
-                    if ( Build.VERSION.SDK_INT >= 23 &&
-                            ContextCompat.checkSelfPermission( getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-                        ActivityCompat.requestPermissions( MainActivity.this, new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  },
-                                0 );
-                    }
-                    else{
-                        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                        longitude = location.getLongitude();
-                        latitude = location.getLatitude();
-
-                        getAddr();
-
-                    }
-
-
-                }catch (Exception e){
-
+                if (!checkLocationServicesStatus()) {
+                    showDialogForLocationServiceSetting();
+                }else {
+                    checkRunTimePermission();
                 }
-                /*try{
-                    URL url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getNearbyMsrstnList?serviceKey="+key+
-                            "&tmX="+tm128.x+"&tmY="+tm128.y+"&ver=1.0");
-
-                    XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
-                    XmlPullParser parser = parserCreator.newPullParser();
-
-                    parser.setInput(url.openStream(),  "utf-8");
-
-                    int parserEvent = parser.getEventType();
-
-                    while (parserEvent != XmlPullParser.END_DOCUMENT){
-                        switch(parserEvent){
-                            case XmlPullParser.START_TAG:
-                                if(parser.getName().equals("stationName")){
-                                    instationName = true;
-                                }
-                                break;
-                            case XmlPullParser.TEXT:
-                                if (instationName){
-                                    stationName = parser.getText();
-                                    instationName = true;
-                                }
-                                break;
-                            case XmlPullParser.END_TAG:
-                                break;
-                        }
-                        parserEvent = parser.next();
-                    }
-
-                }catch (Exception e){
-
-                    Log.d("aaa",e.toString());
-                }
-
-                Toast.makeText(MainActivity.this, stationName, Toast.LENGTH_LONG).show();*/
+                getAddr();
+                getData();
             }
         });
+
+
+
+
+        /*bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                getAddr();
+                getData();
+
+                Log.d("aaafdd", locality+ " "+subLocality+" "+thoroughfare);
+
+            }
+        });*/
     }
 
     public void getAddr(){
+        gpsTracker = new GpsTracker(MainActivity.this);
+        double addratitude = gpsTracker.getLatitude();
+        double addrlongitude = gpsTracker.getLongitude();
+        if (addratitude==0.0 && addrlongitude==0.0){
+            tm128 = Tm128.valueOf(latLng);
+        }else{
+            latLng = new LatLng(addratitude, addrlongitude);
+            tm128 = Tm128.valueOf(latLng);
+            latitude = addratitude;
+            longitude = addrlongitude;
+        }
+
         final Geocoder geocoder = new Geocoder(this);
         List<Address> list = null;
 
@@ -150,38 +187,417 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("test", "입출력 오류 - 서버에서 주소변환시 에러발생");
         }
         if (list != null) {
             if (list.size()==0) {
-                tv.setText("해당되는 주소 정보는 없습니다");
-            } else {
-                String sAddr = list.get(0).getAddressLine(0).toString();
-                String sCountry = list.get(0).getAdminArea().toString();
-                String ss = list.get(0).getThoroughfare().toString();
-                sAddr = sAddr.substring(sAddr.lastIndexOf(sCountry)+sCountry.length()+1);
 
-                tv.setText(sCountry+"  "+ss);
+            } else {
+                admin = list.get(0).getAdminArea();
+                locality = list.get(0).getLocality();
+                subLocality = list.get(0).getLocality();
+                thoroughfare = list.get(0).getThoroughfare();
+                location = list.get(0).getAddressLine(0);
+                locationArray = location.split(" ");
+
+
+                Log.d("dddd",list.toString());
             }
         }
     }
-    final LocationListener gpsLocationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
+
+    public void getData(){
+
+
+        try{
+            Log.d("aaaf",admin+"aa");
+            URL url;
+            if (locality==null){
+                url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getTMStdrCrdnt?serviceKey="+ key+ "&numOfRows=10&pageNo=1&umdName="
+                        +thoroughfare);
+            }else {
+                url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getTMStdrCrdnt?serviceKey="+ key+ "&numOfRows=10&pageNo=1&umdName="
+                        +locality+ " "+thoroughfare);
+            }
+
+
+            InputStream is= url.openStream();
+
+
+            //XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
+            //XmlPullParser parser = parserCreator.newPullParser();
+
+            XmlPullParserFactory factory= XmlPullParserFactory.newInstance();
+            XmlPullParser xpp= factory.newPullParser();
+
+            xpp.setInput(new InputStreamReader(is, "UTF-8"));
+
+            //parser.setInput(new InputStreamReader(url.openStream(), "UTF-8"));
+
+            int parserEvent = xpp.getEventType();
+            String addradmin = "";
+
+            while (parserEvent != XmlPullParser.END_DOCUMENT){
+                switch(parserEvent){
+                    case XmlPullParser.START_TAG:
+                        if(xpp.getName().equals("sidoName")){
+                            xpp.next();
+                            addradmin = xpp.getText();
+                            tvLocation.setText(addradmin);
+                        }
+                        else if(xpp.getName().equals("tmX")){
+                            inTmX = true;
+                        }
+                        else if (xpp.getName().equals("tmY")){
+                            inTmY = true;
+                        }
+
+                        break;
+                    case XmlPullParser.TEXT:
+
+                        if (inTmX){
+                            if (addradmin.equals(admin)){
+                                tmX = xpp.getText();
+                            }
+                            inTmX = false;
+
+                        }
+                        else if (inTmY){
+                            if (addradmin.equals(admin)){
+                                tmY = xpp.getText();
+                            }
+                            inTmY= false;
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        break;
+                }
+                parserEvent = xpp.next();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        try{
+
+            Log.d("asdf", tmX+"  "+ tmY);
+            URL url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getNearbyMsrstnList?serviceKey="+ key+
+                    "&tmX="+latitude+"&tmY="+longitude);
+
+            InputStream is= url.openStream();
+            //XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
+            //XmlPullParser parser = parserCreator.newPullParser();
+
+            XmlPullParserFactory factory= XmlPullParserFactory.newInstance();
+            XmlPullParser xpp= factory.newPullParser();
+
+            xpp.setInput(new InputStreamReader(is, "UTF-8"));
+
+            int parserEvent = xpp.getEventType();
+
+            while (parserEvent != XmlPullParser.END_DOCUMENT){
+                switch(parserEvent){
+                    case XmlPullParser.START_TAG:
+                        if(xpp.getName().equals("stationName")){
+                            instationName = true;
+                        }
+                        break;
+                    case XmlPullParser.TEXT:
+                        if (instationName && stationName.equals("")){
+                            stationName = xpp.getText();
+                            instationName = false;
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        break;
+                }
+                parserEvent = xpp.next();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+
+        try{
+
+            URL url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?serviceKey="+ key+
+                    "&numOfRows=1&pageNo=1&stationName="+stationName+"&dataTerm=DAILY&ver=1.3");
+
+
+            InputStream is= url.openStream();
+
+            //XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
+            //XmlPullParser parser = parserCreator.newPullParser();
+
+            XmlPullParserFactory factory= XmlPullParserFactory.newInstance();
+            XmlPullParser xpp= factory.newPullParser();
+
+            xpp.setInput(new InputStreamReader(is, "UTF-8"));
+
+            int parserEvent = xpp.getEventType();
+
+            while (parserEvent != XmlPullParser.END_DOCUMENT){
+                switch(parserEvent){
+                    case XmlPullParser.START_TAG:
+                        if(xpp.getName().equals("dataTime")){
+                            inDateTime = true;
+                        }
+                        else  if(xpp.getName().equals("so2Value")){
+                            inSo2Value = true;
+                        }
+                        else if(xpp.getName().equals("coValue")){
+                            inCoValue = true;
+                        }
+                        else if(xpp.getName().equals("o3Value")){
+                            inO3Value = true;
+                        }
+                        else if(xpp.getName().equals("no2Value")){
+                            inNo2Value = true;
+                        }
+                        else if(xpp.getName().equals("pm10Value")){
+                            inPm10Value = true;
+                        }
+                        else if(xpp.getName().equals("pm25Value")){
+                            inPm25Value = true;
+                        }
+                        else if(xpp.getName().equals("so2Grade")){
+                            inSo2Grade = true;
+                        }
+                        else if(xpp.getName().equals("coGrade")){
+                            inCoGrade = true;
+                        }
+                        else if(xpp.getName().equals("o3Grade")){
+                            inO3Grade = true;
+                        }
+                        else if(xpp.getName().equals("no2Grade")){
+                            inNo2Grade = true;
+                        }
+                        else if(xpp.getName().equals("pm10Grade")){
+                            inPm10Grade = true;
+                        }
+                        else if(xpp.getName().equals("pm25Grade")){
+                            inPm25Grade = true;
+                        }
+                        else if(xpp.getName().equals("khaiValue")){
+                            inKhaiValue = true;
+                        }
+                        else if(xpp.getName().equals("khaiGrade")){
+                            inKhaiGrade = true;
+                        }
+                        break;
+                    case XmlPullParser.TEXT:
+                        if (inDateTime){
+                            dateTime =  xpp.getText();
+                            inDateTime = false;
+                        }
+                        else if (inSo2Value){
+                            so2value =  xpp.getText();
+                            inSo2Value = false;
+                        }
+                        else if (inCoValue){
+                            covalue =  xpp.getText();
+                            inCoValue = false;
+                        }
+                        else if (inO3Value){
+                            o3value =  xpp.getText();
+                            inO3Value = false;
+                        }
+                        else if (inNo2Value){
+                            no2value =  xpp.getText();
+                            inNo2Value = false;
+                        }
+                        else if (inPm10Value){
+                            pm10value =  xpp.getText();
+                            inPm10Value = false;
+                        }
+                        else if (inPm25Value){
+                            pm25value =  xpp.getText();
+                            inPm25Value = false;
+                        }
+                        else if (inSo2Grade){
+                            so2Grade =  xpp.getText();
+                            inSo2Grade = false;
+                        }
+                        else if (inCoGrade){
+                            coGrade =  xpp.getText();
+                            inCoGrade = false;
+                        }
+                        else if (inO3Grade){
+                            o3Grade =  xpp.getText();
+                            inO3Grade = false;
+                        }
+                        else if (inNo2Grade){
+                            no2Grade =  xpp.getText();
+                            inNo2Grade = false;
+                        }
+                        else if (inPm10Grade){
+                            pm10Grade =  xpp.getText();
+                            inPm10Grade = false;
+                        }
+                        else if (inPm25Grade){
+                            pm25Grade =  xpp.getText();
+                            inPm25Grade = false;
+                        }
+                        else if (inKhaiValue){
+                            khaiValue =  xpp.getText();
+                            inKhaiValue = false;
+                        }
+                        else if (inKhaiGrade){
+                            khaiGrade =  xpp.getText();
+                            inKhaiGrade = false;
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        break;
+                }
+                parserEvent = xpp.next();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        setData();
+    }
 
-        public void onProviderEnabled(String provider) {
+    public void setData(){
+        if (subLocality==null){
+            tvLocation.setText(thoroughfare);
+        }else{
+            tvLocation.setText(locationArray[locationArray.length-3] + " " + thoroughfare);
         }
-
-        public void onProviderDisabled(String provider) {
+        tvDateTime.setText(dateTime);
+        if(Integer.parseInt(pm10Grade)>Integer.parseInt(pm25Grade)){
+            tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
+        }else{
+            tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
         }
-    };
+        tvPm10Status.setText(getStatus(Integer.parseInt(pm10Grade)));
+        tvPm10concentration.setText(pm10value+" ㎍/m³");
 
+        tvPm25status.setText(getStatus(Integer.parseInt(pm25Grade)));
+        tvPm25concentration.setText(pm25value+" ㎍/m³");
 
+        tvNo2status.setText(getStatus(Integer.parseInt(no2Grade)));
+        tvNo2concentration.setText(no2value+" ppm");
+
+        tvO3status.setText(getStatus(Integer.parseInt(o3Grade)));
+        tvO3concentration.setText(o3value+" ppm");
+
+        tvCostatus.setText(getStatus(Integer.parseInt(coGrade)));
+        tvCoconcentration.setText(covalue+" ppm");
+
+        tvSo2status.setText(getStatus(Integer.parseInt(so2Grade)));
+        tvSo2concentration.setText(so2value+" ppm");
+
+        tvDetailDateTime.setText("업데이트 시간 : "+dateTime);
+        tvDetailStation.setText("측정소 이름:"+stationName);
+        tvDetailKhaiValue.setText("통합지수 값 : "+khaiValue+" unit");
+        tvDetailKhaiGrade.setText("통합지수 상태 : " + getStatus(Integer.parseInt(khaiGrade)));
+        setImage();
+
+    }
+
+    public void setImage(){
+        if(Integer.parseInt(pm10Grade)>=Integer.parseInt(pm25Grade)){
+            tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
+            if (pm10Grade.equals("1")){
+                Log.d("aasdf","hah");
+
+                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_very_satisfied_white_36));
+                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorBlue));
+                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_blue));
+                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_blue));
+
+            }else if (pm10Grade.equals("2")){
+
+                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_satisfied_white_36));
+                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorGreen));
+                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_green));
+                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_green));
+
+            }else if(pm10Grade.equals("3")){
+
+                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_dissatisfied_white_36));
+                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorOrange));
+                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_orange));
+                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_orange));
+
+            }else if (pm10Grade.equals("4")){
+                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_very_dissatisfied_white_36));
+                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorRed));
+                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_red));
+                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_red));
+            }
+        }else{
+            tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
+            if (pm25Grade.equals("1")){
+                Log.d("aasdf","hah");
+
+                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_very_satisfied_white_36));
+                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorBlue));
+                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_blue));
+                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_blue));
+
+            }else if (pm25Grade.equals("2")){
+
+                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_satisfied_white_36));
+                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorGreen));
+                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_green));
+                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_green));
+
+            }else if(pm25Grade.equals("3")){
+
+                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_dissatisfied_white_36));
+                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorOrange));
+                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_orange));
+                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_orange));
+
+            }else if (pm25Grade.equals("4")){
+                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_very_dissatisfied_white_36));
+                constraintLayoutMain.setBackgroundColor(getColor(R.color.colorRed));
+                linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_red));
+                constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_red));
+            }
+        }
+        changeImage(imgvCo,coGrade);
+        changeImage(imgvNo2,no2Grade);
+        changeImage(imgvO3,o3Grade);
+        changeImage(imgvPm10, pm10Grade);
+        changeImage(imgvPm25, pm25Grade);
+        changeImage(imgvSo2, so2Grade);
+
+    }
+
+    public void changeImage(ImageView imgv, String status){
+        switch (status){
+            case "1":
+                imgv.setBackground(getDrawable(R.drawable.outline_sentiment_very_satisfied_white_36));
+                break;
+            case "2":
+                imgv.setBackground(getDrawable(R.drawable.outline_sentiment_satisfied_white_36));
+                break;
+            case "3":
+                imgv.setBackground(getDrawable(R.drawable.outline_sentiment_dissatisfied_white_36));
+                break;
+            case "4":
+                imgv.setBackground(getDrawable(R.drawable.outline_sentiment_very_dissatisfied_white_36));
+                break;
+        }
+    }
+
+    public String getStatus(Integer num){
+        switch(num){
+            case 1:
+                return "좋음";
+            case 2:
+                return "보통";
+            case 3:
+                return "나쁨";
+            case 4:
+                return "매우나쁨";
+        }
+        return "";
+    }
 
 
     @Override
