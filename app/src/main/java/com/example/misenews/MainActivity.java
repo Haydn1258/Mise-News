@@ -457,10 +457,10 @@ public class MainActivity extends AppCompatActivity {
                         else if(xpp.getName().equals("no2Grade")){
                             inNo2Grade = true;
                         }
-                        else if(xpp.getName().equals("pm10Grade")){
+                        else if(xpp.getName().equals("pm10Grade1h")){
                             inPm10Grade = true;
                         }
-                        else if(xpp.getName().equals("pm25Grade")){
+                        else if(xpp.getName().equals("pm25Grade1h")){
                             inPm25Grade = true;
                         }
                         else if(xpp.getName().equals("khaiValue")){
