@@ -8,35 +8,22 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.icu.text.DateFormat;
-import android.icu.text.LocaleDisplayNames;
-import android.icu.text.SimpleDateFormat;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.geometry.Tm128;
-import com.naver.maps.map.util.FusedLocationSource;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -45,8 +32,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -65,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             khaiValue = "",khaiGrade = "", location = "" ;
     String[] locationArray;
 
-    double latitude=37.5670135, longitude=126.9783740;
+    Double latitude=37.5670135, longitude=126.9783740;
 
     String locality, admin;
     String subLocality;
@@ -86,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     static Tm128 tm128;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        StrictMode.enableDefaults();
+        //StrictMode.enableDefaults();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -132,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
         }else {
             checkRunTimePermission();
         }
-        getAddr();
-        getData();
+        getJson();
+        //getData();
 
         imgvCached.setOnClickListener(new View.OnClickListener()
         {
@@ -144,8 +140,8 @@ public class MainActivity extends AppCompatActivity {
                 }else {
                     checkRunTimePermission();
                 }
-                getAddr();
-                getData();
+                getJson();
+                //getData();
             }
         });
 
@@ -163,6 +159,48 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });*/
+    }
+
+    public void getJson(){
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request newRequest  = chain.request().newBuilder()
+                                .addHeader("Authorization", "KakaoAK "+"4d40cecd24ecd23e764ca6288d79d61c")
+                                .addHeader("Content-Type", "application/json;charset=UTF-8")
+                                .build();
+                        return chain.proceed(newRequest);
+                    }
+                }).build();
+
+
+
+
+        Retrofit client = new Retrofit.Builder().baseUrl("https://dapi.kakao.com/").addConverterFactory(
+                GsonConverterFactory.create()).client(httpClient).
+                addConverterFactory(ScalarsConverterFactory.create()).build();
+        RetrofitService retrofitService = client.create(RetrofitService.class);
+
+        final Call<Location> call = retrofitService.getTM(latitude, longitude, "WGS84", "TM");
+
+        call.enqueue(new Callback<Location>() {
+            @Override
+            public void onResponse(@NonNull Call<Location> call,@NonNull Response<Location> response) {
+
+                if (response.isSuccessful()) {
+                    tvLocation.setText("gg");
+                    Log.d("aaa", response.body().document+"aa");
+                }
+
+            }
+            @Override
+            public void onFailure(@NonNull Call<Location> call,@NonNull Throwable t) {
+                Log.d("ddddfg",t.toString());
+                tvLocation.setText(t.toString());
+
+            }
+        });
     }
 
     public void getAddr(){
