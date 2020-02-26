@@ -117,8 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
         linearLayoutScrView = (LinearLayout)findViewById(R.id.linearLayoutScrView);
 
-
-
         if (!checkLocationServicesStatus()) {
             showDialogForLocationServiceSetting();
         }else {
@@ -126,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         }
         getAddr();
         getData();
+        setData();
 
         imgvCached.setOnClickListener(new View.OnClickListener()
         {
@@ -138,23 +137,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 getAddr();
                 getData();
+                setData();
             }
         });
 
-
-
-
-        /*bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                getAddr();
-                getData();
-
-                Log.d("aaafdd", locality+ " "+subLocality+" "+thoroughfare);
-
-            }
-        });*/
     }
 
 
@@ -190,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
                 location = list.get(0).getAddressLine(0);
                 locationArray = location.split(" ");
 
+                tvLocation.setText(thoroughfare);
+
 
                 Log.d("dddd",list.toString());
             }
@@ -200,13 +188,14 @@ public class MainActivity extends AppCompatActivity {
 
 
         try{
-            Log.d("aaaf",admin+"aa");
+
             URL url;
             url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getTMStdrCrdnt?serviceKey="+ key+ "&numOfRows=10&pageNo=1&umdName="
                     +thoroughfare);
 
 
             InputStream is= url.openStream();
+            Log.d("aaaf",admin+"aa");
 
 
             //XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
@@ -228,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                         if(xpp.getName().equals("sidoName")){
                             xpp.next();
                             addradmin = xpp.getText();
-                            tvLocation.setText(addradmin);
+
                         }
                         else if(xpp.getName().equals("tmX")){
                             inTmX = true;
@@ -266,14 +255,14 @@ public class MainActivity extends AppCompatActivity {
         if (tmX.replace(" ", "").equals("")){
             try{
                 URL url;
-                thoroughfare.replace("[0-9]", "");
+
 
                 url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/getTMStdrCrdnt?serviceKey="+ key+ "&numOfRows=10&pageNo=1&umdName="
-                        +thoroughfare);
+                        +thoroughfare.replaceAll("[0-9]", ""));
 
 
                 InputStream is= url.openStream();
-                Log.d("aaaf",thoroughfare+"12aa");
+                Log.d("aaaf", thoroughfare.replaceAll("[0-9]", "")+"12aa");
 
 
                 //XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
@@ -295,7 +284,6 @@ public class MainActivity extends AppCompatActivity {
                             if(xpp.getName().equals("sidoName")){
                                 xpp.next();
                                 addradmin = xpp.getText();
-                                tvLocation.setText(addradmin);
                             }
                             else if(xpp.getName().equals("tmX")){
                                 inTmX = true;
@@ -512,7 +500,6 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
-        setData();
     }
 
     public void setData(){
@@ -554,6 +541,9 @@ public class MainActivity extends AppCompatActivity {
         tvDetailStation.setText("측정소 이름 : "+stationName);
         tvDetailKhaiValue.setText("통합지수 값 : "+khaiValue+" unit");
         tvDetailKhaiGrade.setText("통합지수 상태 : " + getStatus(Integer.parseInt(khaiGrade)));
+
+        stationName ="";
+        instationName = false;
         setImage();
 
     }
@@ -568,31 +558,28 @@ public class MainActivity extends AppCompatActivity {
 
             if (pm10Grade.equals("1")){
                 Log.d("aasdf","hah");
-
-                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_very_satisfied_white_36));
+                imgvStatus.setImageResource(R.drawable.outline_sentiment_very_satisfied_white_36);
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorBlue));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_blue));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_blue));
                 window.setStatusBarColor(getColor(R.color.colorBlue));
 
             }else if (pm10Grade.equals("2")){
-
-                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_satisfied_white_36));
+                imgvStatus.setImageResource(R.drawable.outline_sentiment_satisfied_white_36);
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorGreen));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_green));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_green));
                 window.setStatusBarColor(getColor(R.color.colorGreen));
 
             }else if(pm10Grade.equals("3")){
-
-                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_dissatisfied_white_36));
+                imgvStatus.setImageResource(R.drawable.outline_sentiment_dissatisfied_white_36);
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorOrange));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_orange));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_orange));
                 window.setStatusBarColor(getColor(R.color.colorOrange));
 
             }else if (pm10Grade.equals("4")){
-                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_very_dissatisfied_white_36));
+                imgvStatus.setImageResource(R.drawable.outline_sentiment_very_dissatisfied_white_36);
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorRed));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_red));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_red));
@@ -602,16 +589,14 @@ public class MainActivity extends AppCompatActivity {
             tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
             if (pm25Grade.equals("1")){
                 Log.d("aasdf","hah");
-
-                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_very_satisfied_white_36));
+                imgvStatus.setImageResource(R.drawable.outline_sentiment_very_satisfied_white_36);
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorBlue));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_blue));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_blue));
                 window.setStatusBarColor(getColor(R.color.colorBlue));
 
             }else if (pm25Grade.equals("2")){
-
-                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_satisfied_white_36));
+                imgvStatus.setImageResource(R.drawable.outline_sentiment_satisfied_white_36);
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorGreen));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_green));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_green));
@@ -619,14 +604,14 @@ public class MainActivity extends AppCompatActivity {
 
             }else if(pm25Grade.equals("3")){
 
-                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_dissatisfied_white_36));
+                imgvStatus.setImageResource(R.drawable.outline_sentiment_dissatisfied_white_36);
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorOrange));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_orange));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_orange));
                 window.setStatusBarColor(getColor(R.color.colorOrange));
 
             }else if (pm25Grade.equals("4")){
-                imgvStatus.setBackground(getDrawable(R.drawable.outline_sentiment_very_dissatisfied_white_36));
+                imgvStatus.setImageResource(R.drawable.outline_sentiment_very_dissatisfied_white_36);
                 constraintLayoutMain.setBackgroundColor(getColor(R.color.colorRed));
                 linearLayoutScrView.setBackground(getDrawable(R.drawable.rounded_red));
                 constraintLayoutDetail.setBackground(getDrawable(R.drawable.rounded_red));
@@ -645,16 +630,16 @@ public class MainActivity extends AppCompatActivity {
     public void changeImage(ImageView imgv, String status){
         switch (status){
             case "1":
-                imgv.setBackground(getDrawable(R.drawable.outline_sentiment_very_satisfied_white_36));
+                imgv.setImageResource(R.drawable.outline_sentiment_very_satisfied_white_36);
                 break;
             case "2":
-                imgv.setBackground(getDrawable(R.drawable.outline_sentiment_satisfied_white_36));
+                imgv.setImageResource(R.drawable.outline_sentiment_satisfied_white_36);
                 break;
             case "3":
-                imgv.setBackground(getDrawable(R.drawable.outline_sentiment_dissatisfied_white_36));
+                imgv.setImageResource(R.drawable.outline_sentiment_dissatisfied_white_36);
                 break;
             case "4":
-                imgv.setBackground(getDrawable(R.drawable.outline_sentiment_very_dissatisfied_white_36));
+                imgv.setImageResource(R.drawable.outline_sentiment_very_dissatisfied_white_36);
                 break;
         }
     }
