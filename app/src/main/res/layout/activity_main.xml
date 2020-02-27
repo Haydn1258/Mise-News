@@ -42,8 +42,7 @@
             android:layout_marginTop="10dp"
             android:text="Location"
             android:textColor="@android:color/white"
-            android:textSize="36sp"
-            android:textStyle="bold"
+            android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imgvCached"/>
@@ -53,8 +52,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="DateTime"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtvLocation" />
@@ -73,10 +72,10 @@
             android:id="@+id/txtvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="Status"
             android:textColor="@android:color/white"
-            android:textSize="40sp"
-            android:textStyle="bold"
+            android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imgvStatus" />
@@ -110,7 +109,7 @@
                         android:layout_gravity="center"
                         android:text="@string/pm10"
                         android:textColor="@android:color/white"
-                        android:textSize="20sp" />
+                        android:textSize="16sp" />
 
                     <ImageView
                         android:id="@+id/imgvPm10"
@@ -128,7 +127,7 @@
                         android:layout_marginTop="5dp"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/txtvPm10concentration"
@@ -137,7 +136,7 @@
                         android:layout_gravity="center"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
@@ -153,7 +152,7 @@
                         android:layout_gravity="center"
                         android:text="@string/pm25"
                         android:textColor="@android:color/white"
-                        android:textSize="20sp" />
+                        android:textSize="16sp" />
 
                     <ImageView
                         android:id="@+id/imgvPm25"
@@ -171,7 +170,7 @@
                         android:layout_marginTop="5dp"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/txtvPm25concentration"
@@ -180,7 +179,7 @@
                         android:layout_gravity="center"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
@@ -196,7 +195,7 @@
                         android:layout_gravity="center"
                         android:text="@string/no2"
                         android:textColor="@android:color/white"
-                        android:textSize="20sp" />
+                        android:textSize="16sp" />
 
                     <ImageView
                         android:id="@+id/imgvNo2"
@@ -214,7 +213,7 @@
                         android:layout_marginTop="5dp"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/txtvNo2concentration"
@@ -223,7 +222,7 @@
                         android:layout_gravity="center"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
@@ -239,7 +238,7 @@
                         android:layout_gravity="center"
                         android:text="@string/o3"
                         android:textColor="@android:color/white"
-                        android:textSize="20sp" />
+                        android:textSize="16sp" />
 
                     <ImageView
                         android:id="@+id/imgvO3"
@@ -257,7 +256,7 @@
                         android:layout_marginTop="5dp"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/txtvO3concentration"
@@ -266,7 +265,7 @@
                         android:layout_gravity="center"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
@@ -282,7 +281,7 @@
                         android:layout_gravity="center"
                         android:text="@string/co"
                         android:textColor="@android:color/white"
-                        android:textSize="20sp" />
+                        android:textSize="16sp" />
 
                     <ImageView
                         android:id="@+id/imgvCo"
@@ -300,7 +299,7 @@
                         android:layout_marginTop="5dp"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/txtvCoconcentration"
@@ -309,7 +308,7 @@
                         android:layout_gravity="center"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
@@ -325,7 +324,7 @@
                         android:layout_gravity="center"
                         android:text="@string/so2"
                         android:textColor="@android:color/white"
-                        android:textSize="20sp" />
+                        android:textSize="16sp" />
 
                     <ImageView
                         android:id="@+id/imgvSo2"
@@ -343,7 +342,7 @@
                         android:layout_marginTop="5dp"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/txtvSo2concentration"
@@ -352,7 +351,7 @@
                         android:layout_gravity="center"
                         android:text="좋음"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 

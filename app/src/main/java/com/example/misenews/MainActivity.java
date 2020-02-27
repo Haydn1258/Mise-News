@@ -151,12 +151,9 @@ public class MainActivity extends AppCompatActivity {
                     checkRunTimePermission();
                 }
                 getAddr();
-                try{
-                    getData();
-                    setData();
-                }catch (Exception e){
-                    Log.d("Exception", e.toString());
-                }
+                getData();
+                setData();
+
                 imgvCached.setClickable(true);
             }
         });
@@ -549,62 +546,75 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd hh:mm a", new Locale("en", "US"));
         String nowTime = simpleDate.format(mDate);
 
-        if (subLocality==null){
-            tvLocation.setText(thoroughfare);
-        }else{
+        try{
+            tvDateTime.setText(nowTime);
+            if(Integer.parseInt(pm10Grade)>Integer.parseInt(pm25Grade)){
+                tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
+            }else{
+                tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
+            }
+            tvPm10Status.setText(getStatus(Integer.parseInt(pm10Grade)));
+            tvPm10concentration.setText(pm10value+" ㎍/m³");
+
+            tvPm25status.setText(getStatus(Integer.parseInt(pm25Grade)));
+            tvPm25concentration.setText(pm25value+" ㎍/m³");
+
+            tvNo2status.setText(getStatus(Integer.parseInt(no2Grade)));
+            tvNo2concentration.setText(no2value+" ppm");
+
+            tvO3status.setText(getStatus(Integer.parseInt(o3Grade)));
+            tvO3concentration.setText(o3value+" ppm");
+
+            tvCostatus.setText(getStatus(Integer.parseInt(coGrade)));
+            tvCoconcentration.setText(covalue+" ppm");
+
+            tvSo2status.setText(getStatus(Integer.parseInt(so2Grade)));
+            tvSo2concentration.setText(so2value+" ppm");
+
+            tvDetailDateTime.setText("업데이트 시간 : "+dateTime);
+            tvDetailStation.setText("측정소 이름 : "+stationName);
+            tvDetailKhaiValue.setText("통합지수 값 : "+khaiValue+" unit");
+            tvDetailKhaiGrade.setText("통합지수 상태 : " + getStatus(Integer.parseInt(khaiGrade)));
+
+            stationName ="";
+            instationName = false;
             tvLocation.setText(locationArray[locationArray.length-3] + " " + locationArray[locationArray.length-2]);
+
+
+        }catch (Exception e){
+            Log.d("Exception", e.toString());
+            latitude=37.5670135;
+            longitude=126.9783740;
+            subLocality = null;
+            thoroughfare = "태평로1가";
+            admin = "서울특별시";
+            locationArray[locationArray.length-3] = "중구";
+            locationArray[locationArray.length-2] = "태평로1가";
+            getData();
+            setData();
         }
-        tvDateTime.setText(nowTime);
-        if(Integer.parseInt(pm10Grade)>Integer.parseInt(pm25Grade)){
-            tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
-        }else{
-            tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
-        }
-        tvPm10Status.setText(getStatus(Integer.parseInt(pm10Grade)));
-        tvPm10concentration.setText(pm10value+" ㎍/m³");
-
-        tvPm25status.setText(getStatus(Integer.parseInt(pm25Grade)));
-        tvPm25concentration.setText(pm25value+" ㎍/m³");
-
-        tvNo2status.setText(getStatus(Integer.parseInt(no2Grade)));
-        tvNo2concentration.setText(no2value+" ppm");
-
-        tvO3status.setText(getStatus(Integer.parseInt(o3Grade)));
-        tvO3concentration.setText(o3value+" ppm");
-
-        tvCostatus.setText(getStatus(Integer.parseInt(coGrade)));
-        tvCoconcentration.setText(covalue+" ppm");
-
-        tvSo2status.setText(getStatus(Integer.parseInt(so2Grade)));
-        tvSo2concentration.setText(so2value+" ppm");
-
-        tvDetailDateTime.setText("업데이트 시간 : "+dateTime);
-        tvDetailStation.setText("측정소 이름 : "+stationName);
-        tvDetailKhaiValue.setText("통합지수 값 : "+khaiValue+" unit");
-        tvDetailKhaiGrade.setText("통합지수 상태 : " + getStatus(Integer.parseInt(khaiGrade)));
-
-        stationName ="";
-        instationName = false;
         setImage();
-
     }
 
     public void setImage(){
-        if(Integer.parseInt(pm10Grade)>=Integer.parseInt(pm25Grade)){
-            tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
-            setColor(pm10Grade);
+        try{
+            if(Integer.parseInt(pm10Grade)>=Integer.parseInt(pm25Grade)){
+                tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
+                setColor(pm10Grade);
 
-        }else{
-            tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
-            setColor(pm25Grade);
+            }else{
+                tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
+                setColor(pm25Grade);
+            }
+            changeImage(imgvCo,coGrade);
+            changeImage(imgvNo2,no2Grade);
+            changeImage(imgvO3,o3Grade);
+            changeImage(imgvPm10, pm10Grade);
+            changeImage(imgvPm25, pm25Grade);
+            changeImage(imgvSo2, so2Grade);
+        }catch (Exception e){
+            Log.d("Exception", e.toString());
         }
-        changeImage(imgvCo,coGrade);
-        changeImage(imgvNo2,no2Grade);
-        changeImage(imgvO3,o3Grade);
-        changeImage(imgvPm10, pm10Grade);
-        changeImage(imgvPm25, pm25Grade);
-        changeImage(imgvSo2, so2Grade);
-
     }
 
     public void setColor(String status){
