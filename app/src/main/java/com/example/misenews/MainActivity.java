@@ -239,17 +239,14 @@ public class MainActivity extends AppCompatActivity {
                 location = list.get(0).getAddressLine(0);
                 locationArray = location.split(" ");
 
-
-
-
                 Log.d("dddd",list.toString());
             }
         }
     }
 
     public void getData(){
-
-
+        stationName ="";
+        instationName = false;
         try{
 
             URL url;
@@ -421,6 +418,7 @@ public class MainActivity extends AppCompatActivity {
 
         }catch (Exception e){
             e.printStackTrace();
+            tvLocation.setText(e.toString());
         }
 
 
@@ -429,6 +427,7 @@ public class MainActivity extends AppCompatActivity {
 
             URL url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?serviceKey="+ key+
                     "&numOfRows=1&pageNo=1&stationName="+stationName+"&dataTerm=DAILY&ver=1.3");
+            Log.d("asdff123",stationName);
 
             InputStream is= url.openStream();
 
@@ -622,12 +621,13 @@ public class MainActivity extends AppCompatActivity {
             tvDetailDateTime.setText("업데이트 시간 : "+dateTime);
             tvDetailStation.setText("측정소 이름 : "+stationName);
             tvDetailKhaiValue.setText("통합지수 값 : "+khaiValue+" unit");
-            if (!khaiGrade.replace(" ","").equals("")){
+            if (!(khaiGrade.replace(" ","").equals(""))){
+                Log.d("aattaa",khaiGrade);
                 tvDetailKhaiGrade.setText("통합지수 상태 : " + getStatus(Integer.parseInt(khaiGrade)));
 
             }else {
                 tvDetailKhaiGrade.setText("통합지수 상태 : ");
-                Log.d("aattaa",khaiGrade);
+
             }
 
             tvLocation.setText(locationArray[locationArray.length-3] + " " + locationArray[locationArray.length-2]);
