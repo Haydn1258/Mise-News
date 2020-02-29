@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-    String key = "mjfRpO4X3kZj357lQFtFSps%2FRAy1g%2FgZXIHYXcS7SFQN0uTpLkoi%2FWqc8fZvb3HrkpVqiGQzXdt7kSkNXRkaVQ%3D%3D";
+    String key = "vSrFiusUpPPUxpFdDrsj7gim6dcWzgMPqXCff3eiFjS3psE%2BnEJLZEuuUA7uqEFvQJA6HIJtK5oHxokQxwKuEQ%3D%3D";
 
     Boolean instationName = false, inTmX = false, inTmY = false, inDateTime=false, inSo2Value=false, inCoValue= false, inO3Value=false
             , inNo2Value= false, inPm10Value= false, inPm25Value= false, inSo2Grade= false, inCoGrade = false, inO3Grade = false
@@ -138,7 +138,20 @@ public class MainActivity extends AppCompatActivity {
         }
         getAddr();
         getData();
-        setData();
+        if (!stationName.equals("")){
+            setData();
+        }else {
+            latitude=37.5670135;
+            longitude=126.9783740;
+            subLocality = null;
+            thoroughfare = "태평로1가";
+            admin = "서울특별시";
+            locationArray[locationArray.length-3] = "중구";
+            locationArray[locationArray.length-2] = "태평로1가";
+            getData();
+            setData();
+        }
+
 
         imgvCached.setOnClickListener(new View.OnClickListener()
         {
@@ -152,7 +165,19 @@ public class MainActivity extends AppCompatActivity {
                 }
                 getAddr();
                 getData();
-                setData();
+                if (!stationName.equals("")){
+                    setData();
+                }else {
+                    latitude=37.5670135;
+                    longitude=126.9783740;
+                    subLocality = null;
+                    thoroughfare = "태평로1가";
+                    admin = "서울특별시";
+                    locationArray[locationArray.length-3] = "중구";
+                    locationArray[locationArray.length-2] = "태평로1가";
+                    getData();
+                    setData();
+                }
 
                 imgvCached.setClickable(true);
             }
@@ -214,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                 location = list.get(0).getAddressLine(0);
                 locationArray = location.split(" ");
 
-                tvLocation.setText(thoroughfare);
+
 
 
                 Log.d("dddd",list.toString());
@@ -405,7 +430,6 @@ public class MainActivity extends AppCompatActivity {
             URL url = new URL("http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?serviceKey="+ key+
                     "&numOfRows=1&pageNo=1&stationName="+stationName+"&dataTerm=DAILY&ver=1.3");
 
-
             InputStream is= url.openStream();
 
             //XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
@@ -548,64 +572,95 @@ public class MainActivity extends AppCompatActivity {
 
         try{
             tvDateTime.setText(nowTime);
-            if(Integer.parseInt(pm10Grade)>Integer.parseInt(pm25Grade)){
-                tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
-            }else{
-                tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
+
+            if (!pm10Grade.replace(" ","").equals("")){
+                tvPm10Status.setText(getStatus(Integer.parseInt(pm10Grade)));
+            }else {
+                tvPm10Status.setText("");
             }
-            tvPm10Status.setText(getStatus(Integer.parseInt(pm10Grade)));
             tvPm10concentration.setText(pm10value+" ㎍/m³");
 
-            tvPm25status.setText(getStatus(Integer.parseInt(pm25Grade)));
+            if (!pm25Grade.replace(" ","").equals("")){
+                tvPm25status.setText(getStatus(Integer.parseInt(pm25Grade)));
+            }else {
+                tvPm25status.setText("");
+            }
+
             tvPm25concentration.setText(pm25value+" ㎍/m³");
 
-            tvNo2status.setText(getStatus(Integer.parseInt(no2Grade)));
+            if (!no2Grade.replace(" ","").equals("")){
+                tvNo2status.setText(getStatus(Integer.parseInt(no2Grade)));
+            }else {
+                tvNo2status.setText("");
+            }
             tvNo2concentration.setText(no2value+" ppm");
 
-            tvO3status.setText(getStatus(Integer.parseInt(o3Grade)));
+            if (!o3Grade.replace(" ","").equals("")){
+                tvO3status.setText(getStatus(Integer.parseInt(o3Grade)));
+            }else {
+                tvO3status.setText("");
+            }
+
             tvO3concentration.setText(o3value+" ppm");
 
-            tvCostatus.setText(getStatus(Integer.parseInt(coGrade)));
+            if (!coGrade.replace(" ","").equals("")){
+                tvCostatus.setText(getStatus(Integer.parseInt(coGrade)));
+            }else {
+                tvCostatus.setText("");
+            }
+
             tvCoconcentration.setText(covalue+" ppm");
 
-            tvSo2status.setText(getStatus(Integer.parseInt(so2Grade)));
+            if (!so2Grade.replace(" ","").equals("")){
+                tvSo2status.setText(getStatus(Integer.parseInt(so2Grade)));
+            }else {
+                tvSo2status.setText("");
+            }
+
             tvSo2concentration.setText(so2value+" ppm");
 
             tvDetailDateTime.setText("업데이트 시간 : "+dateTime);
             tvDetailStation.setText("측정소 이름 : "+stationName);
             tvDetailKhaiValue.setText("통합지수 값 : "+khaiValue+" unit");
-            tvDetailKhaiGrade.setText("통합지수 상태 : " + getStatus(Integer.parseInt(khaiGrade)));
+            if (!khaiGrade.replace(" ","").equals("")){
+                tvDetailKhaiGrade.setText("통합지수 상태 : " + getStatus(Integer.parseInt(khaiGrade)));
 
-            stationName ="";
-            instationName = false;
+            }else {
+                tvDetailKhaiGrade.setText("통합지수 상태 : ");
+                Log.d("aattaa",khaiGrade);
+            }
+
             tvLocation.setText(locationArray[locationArray.length-3] + " " + locationArray[locationArray.length-2]);
 
 
         }catch (Exception e){
-            Log.d("Exception", e.toString());
-            latitude=37.5670135;
-            longitude=126.9783740;
-            subLocality = null;
-            thoroughfare = "태평로1가";
-            admin = "서울특별시";
-            locationArray[locationArray.length-3] = "중구";
-            locationArray[locationArray.length-2] = "태평로1가";
-            getData();
-            setData();
+            Log.d("aattee", e.toString());
+
         }
         setImage();
     }
 
     public void setImage(){
         try{
-            if(Integer.parseInt(pm10Grade)>=Integer.parseInt(pm25Grade)){
-                tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
-                setColor(pm10Grade);
-
-            }else{
+            if (pm10Grade.replace(" ","").equals("") && pm25Grade.replace(" ","").equals("")){
+                tvStatus.setText("정보없음");
+            }else if (pm10Grade.replace(" ","").equals("")){
                 tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
                 setColor(pm25Grade);
+            }else if (pm25Grade.replace(" ","").equals("")){
+                tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
+                setColor(pm10Grade);
+            }else {
+                if(Integer.parseInt(pm10Grade)>=Integer.parseInt(pm25Grade)){
+                    tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
+                    setColor(pm10Grade);
+
+                }else{
+                    tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
+                    setColor(pm25Grade);
+                }
             }
+
             changeImage(imgvCo,coGrade);
             changeImage(imgvNo2,no2Grade);
             changeImage(imgvO3,o3Grade);
@@ -634,7 +689,7 @@ public class MainActivity extends AppCompatActivity {
                 drawer_layout.setBackgroundResource(R.drawable.main_backgound_orange);
                 drawer.setBackgroundColor(getColor(R.color.colorAmber));
                 break;
-            case "4":
+            default:
                 window.setStatusBarColor(getColor(R.color.colorDeepOrange));
                 drawer_layout.setBackgroundResource(R.drawable.main_background_red);
                 drawer.setBackgroundColor(getColor(R.color.colorDeepOrange));
@@ -654,7 +709,7 @@ public class MainActivity extends AppCompatActivity {
             case "3":
                 imgv.setImageResource(R.drawable.outline_sentiment_dissatisfied_white_36);
                 break;
-            case "4":
+            default:
                 imgv.setImageResource(R.drawable.outline_sentiment_very_dissatisfied_white_36);
                 break;
         }
