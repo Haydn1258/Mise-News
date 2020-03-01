@@ -647,17 +647,20 @@ public class MainActivity extends AppCompatActivity {
             }else if (pm10Grade.replace(" ","").equals("")){
                 tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
                 setColor(pm25Grade);
+                changeImage(imgvStatus, pm25Grade);
             }else if (pm25Grade.replace(" ","").equals("")){
                 tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
                 setColor(pm10Grade);
+                changeImage(imgvStatus, pm10Grade);
             }else {
                 if(Integer.parseInt(pm10Grade)>=Integer.parseInt(pm25Grade)){
                     tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
                     setColor(pm10Grade);
-
+                    changeImage(imgvStatus, pm10Grade);
                 }else{
                     tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
                     setColor(pm25Grade);
+                    changeImage(imgvStatus, pm25Grade);
                 }
             }
 
