@@ -572,29 +572,29 @@ public class MainActivity extends AppCompatActivity {
         try{
             tvDateTime.setText(nowTime);
 
-            if (!pm10Grade.replace(" ","").equals("")){
+            if (!pm10value.replace("-","").equals("")){
                 tvPm10Status.setText(getStatus(Integer.parseInt(pm10Grade)));
             }else {
                 tvPm10Status.setText("");
             }
             tvPm10concentration.setText(pm10value+" ㎍/m³");
 
-            if (!pm25Grade.replace(" ","").equals("")){
-                tvPm25status.setText(getStatus(Integer.parseInt(pm25Grade)));
+            if (!((pm25value.replace("-", "")).equals(""))){
+                tvPm25status.setText(pm25value);
             }else {
                 tvPm25status.setText("");
             }
 
             tvPm25concentration.setText(pm25value+" ㎍/m³");
 
-            if (!no2Grade.replace(" ","").equals("")){
+            if (!no2value.replace("-","").equals("")){
                 tvNo2status.setText(getStatus(Integer.parseInt(no2Grade)));
             }else {
                 tvNo2status.setText("");
             }
             tvNo2concentration.setText(no2value+" ppm");
 
-            if (!o3Grade.replace(" ","").equals("")){
+            if (!o3value.replace("-","").equals("")){
                 tvO3status.setText(getStatus(Integer.parseInt(o3Grade)));
             }else {
                 tvO3status.setText("");
@@ -602,7 +602,7 @@ public class MainActivity extends AppCompatActivity {
 
             tvO3concentration.setText(o3value+" ppm");
 
-            if (!coGrade.replace(" ","").equals("")){
+            if (!covalue.replace("-","").equals("")){
                 tvCostatus.setText(getStatus(Integer.parseInt(coGrade)));
             }else {
                 tvCostatus.setText("");
@@ -610,7 +610,7 @@ public class MainActivity extends AppCompatActivity {
 
             tvCoconcentration.setText(covalue+" ppm");
 
-            if (!so2Grade.replace(" ","").equals("")){
+            if (!so2value.replace("-","").equals("")){
                 tvSo2status.setText(getStatus(Integer.parseInt(so2Grade)));
             }else {
                 tvSo2status.setText("");
@@ -621,7 +621,7 @@ public class MainActivity extends AppCompatActivity {
             tvDetailDateTime.setText("업데이트 시간 : "+dateTime);
             tvDetailStation.setText("측정소 이름 : "+stationName);
             tvDetailKhaiValue.setText("통합지수 값 : "+khaiValue+" unit");
-            if (!(khaiGrade.replace(" ","").equals(""))){
+            if (!(khaiValue.replace("-","").equals(""))){
                 Log.d("aattaa",khaiGrade);
                 tvDetailKhaiGrade.setText("통합지수 상태 : " + getStatus(Integer.parseInt(khaiGrade)));
 
@@ -642,13 +642,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void setImage(){
         try{
-            if (pm10Grade.replace(" ","").equals("") && pm25Grade.replace(" ","").equals("")){
+            if (pm10Grade.replace("-","").equals("") && pm25Grade.replace("-","").equals("")){
                 tvStatus.setText("정보없음");
-            }else if (pm10Grade.replace(" ","").equals("")){
+            }else if (pm10value.replace("-","").equals("")){
                 tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
                 setColor(pm25Grade);
                 changeImage(imgvStatus, pm25Grade);
-            }else if (pm25Grade.replace(" ","").equals("")){
+            }else if (pm25value.replace("-","").equals("")){
                 tvStatus.setText(getStatus(Integer.parseInt(pm10Grade)));
                 setColor(pm10Grade);
                 changeImage(imgvStatus, pm10Grade);
