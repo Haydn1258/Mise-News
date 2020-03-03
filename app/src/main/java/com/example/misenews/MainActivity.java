@@ -580,7 +580,7 @@ public class MainActivity extends AppCompatActivity {
             tvPm10concentration.setText(pm10value+" ㎍/m³");
 
             if (!((pm25value.replace("-", "")).equals(""))){
-                tvPm25status.setText(pm25value);
+                tvPm25status.setText(getStatus(Integer.parseInt(pm25Grade)));
             }else {
                 tvPm25status.setText("");
             }
