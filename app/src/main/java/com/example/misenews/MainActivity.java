@@ -642,8 +642,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void setImage(){
         try{
-            if (pm10Grade.replace("-","").equals("") && pm25Grade.replace("-","").equals("")){
+            if (pm10value.replace("-","").equals("") && pm25value.replace("-","").equals("")){
                 tvStatus.setText("정보없음");
+                changeImage(imgvStatus, "4");
+                setColor("4");
             }else if (pm10value.replace("-","").equals("")){
                 tvStatus.setText(getStatus(Integer.parseInt(pm25Grade)));
                 setColor(pm25Grade);
